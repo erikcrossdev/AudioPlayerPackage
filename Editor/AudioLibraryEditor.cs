@@ -11,8 +11,7 @@ public class AudioLibraryEditor : Editor
 	private void OnEnable()
 	{
 		try
-		{
-			// Verificação extra de segurança
+		{			
 			if (target == null || serializedObject == null)
 			{
 				Debug.LogWarning("AudioLibraryEditor: Target or serializedObject is null");
@@ -59,7 +58,6 @@ public class AudioLibraryEditor : Editor
 		}
 		finally
 		{
-			// Aplica modificações com segurança
 			if (serializedObject != null && serializedObject.targetObject != null)
 			{
 				serializedObject.ApplyModifiedProperties();
@@ -102,6 +100,7 @@ public class AudioLibraryEditor : Editor
 
 		//empty clips
 		bool hasEmptyClips = false;
+		string typeClipName = string.Empty;
 		for (int i = 0; i < soundsProp.arraySize; i++)
 		{
 			var element = soundsProp.GetArrayElementAtIndex(i);
@@ -113,17 +112,36 @@ public class AudioLibraryEditor : Editor
 			if (randomClip.boolValue)
 			{
 				var clips = element.FindPropertyRelative("_clips");
-				if (clips == null || clips.arraySize == 0) hasEmptyClips = true;
+				if (clips == null || clips.arraySize == 0)
+				{
+					hasEmptyClips = true;
+					typeClipName = element.FindPropertyRelative("typeDefinition")?.objectReferenceValue?.name;
+				}
+				for (int j = 0; j < clips.arraySize; j++)
+				{
+					var clipElement = clips.GetArrayElementAtIndex(j);
+					if (clipElement == null || clipElement.objectReferenceValue == null)
+					{
+						hasEmptyClips = true;
+						typeClipName = element.FindPropertyRelative("typeDefinition")?.objectReferenceValue?.name;
+						break;
+					}
+				}
 			}
 			else
 			{
 				var clip = element.FindPropertyRelative("_clip");
-				if (clip == null || clip.objectReferenceValue == null) hasEmptyClips = true;
+				if (clip == null || clip.objectReferenceValue == null)
+				{
+					hasEmptyClips = true;
+					typeClipName = element.FindPropertyRelative("typeDefinition")?.objectReferenceValue?.name;
+				}
 			}
 		}
 
 		bool hasEmptyMixer = false;
-		for (int i = 0; i < soundsProp.arraySize; i++) {
+		for (int i = 0; i < soundsProp.arraySize; i++)
+		{
 			var element = soundsProp.GetArrayElementAtIndex(i);
 			if (element == null) continue;
 
@@ -133,18 +151,21 @@ public class AudioLibraryEditor : Editor
 			if (mixerProp.boolValue)
 			{
 				var mixer = element.FindPropertyRelative("_mixer");
-				if (mixer == null || mixer.objectReferenceValue == null) hasEmptyMixer = true;
+				if (mixer == null || mixer.objectReferenceValue == null) { 
+					hasEmptyMixer = true;
+					typeClipName = element.FindPropertyRelative("typeDefinition")?.objectReferenceValue?.name;
+				}
 			}
 		}
 
 		if (hasEmptyMixer)
 		{
-			EditorGUILayout.HelpBox("Property 'mixer' is null!", MessageType.Error);
+			EditorGUILayout.HelpBox($"Property 'mixer' is null on Sound Type: {typeClipName}", MessageType.Error);
 		}
 
 		if (hasEmptyClips)
 		{
-			EditorGUILayout.HelpBox("Warning: Some sounds does not have a valid AudioClip!", MessageType.Warning);
+			EditorGUILayout.HelpBox($"Warning: Some sounds does not have a valid AudioClip. Sound type: {typeClipName}", MessageType.Warning);
 		}
 	}
 
