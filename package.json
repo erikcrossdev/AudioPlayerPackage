@@ -1,0 +1,20 @@
+{
+	"name": "com.utopiags.audioplayerpackage",
+	"version": "1.0.0",
+	"displayName": "Audio Player Package",
+	"description": "Audio Package for SFX",
+	"unity": "2022.3",
+	"unityRelease": "0b5",
+	"documentationUrl": "",
+	"changelogUrl": "",
+	"licensesUrl": "",
+	"dependencies": {
+	},
+	"keywords": [
+	],
+	"author": {
+		"email": "erikcruzdev@gmail.com",
+		"name": "UtopiaGS",
+		"url": "https://www.unity3d.com"
+	}
+}

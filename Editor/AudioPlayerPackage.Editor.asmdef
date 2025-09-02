@@ -1,0 +1,18 @@
+{
+    "name": "AudioPlayerPackage.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:89982facc8002db4e85a00b1ea37f916"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
