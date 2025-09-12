@@ -7,9 +7,9 @@ using UnityEngine.Audio;
 [RequireComponent(typeof(AudioSource))]
 public class AudioPlayer : MonoBehaviour
 {
-	private AudioSource audioSource;
+	protected AudioSource audioSource;
 
-	[SerializeField] private AudioLibrary _audioLibrary;
+	[SerializeField] protected AudioLibrary _audioLibrary;
 
 	void Awake()
 	{
