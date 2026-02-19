@@ -1,6 +1,6 @@
 {
 	"name": "com.utopiags.audioplayerpackage",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"displayName": "Audio Player Package",
 	"description": "Audio Package for SFX",
 	"unity": "2022.3",

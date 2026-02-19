@@ -11,7 +11,8 @@ public class AudioLibraryEditor : Editor
 	private void OnEnable()
 	{
 		try
-		{			
+		{
+			// Verificação extra de segurança
 			if (target == null || serializedObject == null)
 			{
 				Debug.LogWarning("AudioLibraryEditor: Target or serializedObject is null");
@@ -58,6 +59,7 @@ public class AudioLibraryEditor : Editor
 		}
 		finally
 		{
+			// Aplica modificações com segurança
 			if (serializedObject != null && serializedObject.targetObject != null)
 			{
 				serializedObject.ApplyModifiedProperties();

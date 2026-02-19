@@ -44,7 +44,7 @@ public class SoundToPlayDrawer : PropertyDrawer
 		Rect rect = new Rect(position.x, position.y, position.width, EditorGUIUtility.singleLineHeight);
 		rect.y += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
 
-		// Search properties
+		// Busca das propriedades
 		var clipProp = property.FindPropertyRelative("_clip");
 		var clipsProp = property.FindPropertyRelative("_clips");
 		var randomClipProp = property.FindPropertyRelative("shouldRandomizeClip");
@@ -75,7 +75,9 @@ public class SoundToPlayDrawer : PropertyDrawer
 		boldStyle.fontSize = 14;
 
 		float fieldHeight = EditorGUI.GetPropertyHeight(typeDefProp);
-	
+		//EditorGUI.LabelField(new Rect(rect.x, rect.y, rect.width, fieldHeight), $"Sound: {soundName}", boldStyle);
+		//rect.y += fieldHeight + EditorGUIUtility.standardVerticalSpacing;
+		// SFX Type
 		EditorGUI.PropertyField(new Rect(rect.x, rect.y, rect.width, fieldHeight), typeDefProp, new GUIContent("SFX Type"));
 		rect.y += fieldHeight + EditorGUIUtility.standardVerticalSpacing;
 
@@ -192,7 +194,7 @@ public class SoundToPlayDrawer : PropertyDrawer
 		string key = property.propertyPath;
 		if (foldoutStates.TryGetValue(key, out bool isExpanded) && !isExpanded)
 		{
-			// Min height 
+			// Altura mínima da foldout
 			return EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
 		}
 
