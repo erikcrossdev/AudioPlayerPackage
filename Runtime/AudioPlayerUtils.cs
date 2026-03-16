@@ -3,8 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
+using UnityEngine.Events;
 
-public static class AudioPlayerUtils 
+public static class AudioPlayerUtils
 {
 	private static SoundToPlay GetSFX(AudioLibrary audioLibrary, SFXTypeDefinition typeDefinition)
 	{
@@ -12,7 +13,8 @@ public static class AudioPlayerUtils
 		return sfx;
 	}
 
-	public static void OverrideAudioSource(AudioSource audioSource, AudioLibrary audioLibrary, SFXTypeDefinition typeDefinition) {
+	public static void OverrideAudioSource(AudioSource audioSource, AudioLibrary audioLibrary, SFXTypeDefinition typeDefinition)
+	{
 		SoundToPlay sfx = GetSFX(audioLibrary, typeDefinition);
 		if (sfx != null || !sfx.ShouldOverrideSourceSettings)
 		{
@@ -43,7 +45,8 @@ public static class AudioPlayerUtils
 			audioSource.pitch = (sfx.ShouldRandomizePitch) ? sfx.GetPitch() : defaultPitch;
 
 			audioSource.volume = sfx.GetVolume();
-			if (sfx.ShouldUseAudioMixer && sfx.Mixer != null) {
+			if (sfx.ShouldUseAudioMixer && sfx.Mixer != null)
+			{
 				audioSource.outputAudioMixerGroup = sfx.Mixer;
 			}
 			OverrideAudioSource(audioSource, audioLibrary, typeDefinition);
@@ -87,7 +90,7 @@ public static class AudioPlayerUtils
 			if (!sfx.ShouldLoop)
 			{
 				audioSource.PlayOneShot(sfx.GetClip());
-				if(OnSoundEnd != null && audioSource!=null)
+				if (OnSoundEnd != null && audioSource != null)
 				{
 					audioSource.GetComponent<MonoBehaviour>().StartCoroutine(OnSoundFinished(audioSource, OnSoundEnd, delay));
 				}
@@ -105,7 +108,7 @@ public static class AudioPlayerUtils
 		}
 	}
 
-	public static void PlaySound(AudioSource audioSource, AudioLibrary audioLibrary, SFXTypeDefinition typeDefinition, Action OnSoundEnd, float delay)
+	public static void PlaySoundList(AudioSource audioSource, AudioLibrary audioLibrary, SFXTypeDefinition typeDefinition, UnityEvent OnSoundEnd, float delay)
 	{
 		float defaultPitch = audioSource.pitch;
 		if (audioLibrary == null)
@@ -128,9 +131,9 @@ public static class AudioPlayerUtils
 			if (!sfx.ShouldLoop)
 			{
 				audioSource.PlayOneShot(sfx.GetClip());
-				if(OnSoundEnd != null && audioSource!=null)
+				if (OnSoundEnd != null && audioSource != null)
 				{
-					audioSource.GetComponent<MonoBehaviour>().StartCoroutine(OnSoundFinished(audioSource, OnSoundEnd, delay));
+					audioSource.GetComponent<MonoBehaviour>().StartCoroutine(OnSoundItemFinished(audioSource, OnSoundEnd, delay));
 				}
 			}
 			else
@@ -146,59 +149,19 @@ public static class AudioPlayerUtils
 		}
 	}
 
-public static void PlaySound(AudioSource audioSource, AudioLibrary audioLibrary, SFXTypeDefinition typeDefinition, UnityAction OnSoundEnd, float delay)
-{
-	float defaultPitch = audioSource.pitch;
-	if (audioLibrary == null)
+	public static IEnumerator OnSoundItemFinished(AudioSource audioSource, UnityEvent OnSoundFinished, float delay)
 	{
-		Debug.LogError("AudioLibrary not set");
-		return;
-	}
-
-	SoundToPlay sfx = GetSFX(audioLibrary, typeDefinition);
-	if (sfx != null)
-	{
-		audioSource.pitch = (sfx.ShouldRandomizePitch) ? sfx.GetPitch() : defaultPitch;
-
-		audioSource.volume = sfx.GetVolume();
-		if (sfx.ShouldUseAudioMixer && sfx.Mixer != null)
+		while (audioSource.isPlaying)
 		{
-			audioSource.outputAudioMixerGroup = sfx.Mixer;
+			yield return null;
 		}
-		OverrideAudioSource(audioSource, audioLibrary, typeDefinition);
-		if (!sfx.ShouldLoop)
-		{
-			audioSource.PlayOneShot(sfx.GetClip());
-			if (OnSoundEnd != null && audioSource != null)
-			{
-				audioSource.GetComponent<MonoBehaviour>().StartCoroutine(OnSoundFinished(audioSource, OnSoundEnd, delay));
-			}
-		}
-		else
-		{
-			audioSource.loop = true;
-			audioSource.clip = sfx.GetClip();
-			audioSource.Play();
-		}
+		yield return new WaitForSeconds(delay);
+		OnSoundFinished?.Invoke();
 	}
-	else
-	{
-		Debug.LogError($"SFX from type {typeDefinition.name} not found in audio library");
-	}
-}
 
-public static IEnumerator OnSoundFinished(AudioSource audioSource, UnityEvent OnSoundFinished, float delay)
-{
-	while (audioSource.isPlaying)
+	public static IEnumerator OnSoundFinished(AudioSource audioSource, Action OnSoundFinished, float delay)
 	{
-		yield return null;
-	}
-	yield return new WaitForSeconds(delay);
-	OnSoundFinished?.Invoke();
-}
-
-	public static IEnumerator OnSoundFinished(AudioSource audioSource, Action OnSoundFinished, float delay) {
-		while(audioSource.isPlaying)
+		while (audioSource.isPlaying)
 		{
 			yield return null;
 		}
@@ -223,7 +186,7 @@ public static IEnumerator OnSoundFinished(AudioSource audioSource, UnityEvent On
 
 	public static void PlaySoundWithFade(AudioSource audioSource, AudioLibrary audioLibrary, SFXTypeDefinition typeDefinition, float fadeInDuration, float fadeOutDuration)
 	{
-		SoundToPlay sfx = GetSFX(audioLibrary,typeDefinition);
+		SoundToPlay sfx = GetSFX(audioLibrary, typeDefinition);
 		if (sfx == null || sfx.GetClip() == null)
 		{
 			Debug.LogWarning("Invalid sound or clip.");
