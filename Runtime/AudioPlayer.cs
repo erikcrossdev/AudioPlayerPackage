@@ -9,7 +9,11 @@ public class AudioPlayer : MonoBehaviour
 {
 	protected AudioSource audioSource;
 
+	public AudioSource AudioSource => audioSource;
+
 	[SerializeField] protected AudioLibrary _audioLibrary;
+
+	public AudioLibrary AudioLibrary => _audioLibrary;	
 
 	void Awake()
 	{

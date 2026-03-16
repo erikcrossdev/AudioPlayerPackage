@@ -67,7 +67,7 @@ public static class AudioPlayerUtils
 		}
 	}
 
-	public static void PlaySoundWithActionEnd(AudioSource audioSource, AudioLibrary audioLibrary, SFXTypeDefinition typeDefinition, Action OnSoundEnd, float delay)
+	public static void PlaySound(AudioSource audioSource, AudioLibrary audioLibrary, SFXTypeDefinition typeDefinition, Action OnSoundEnd, float delay)
 	{
 		float defaultPitch = audioSource.pitch;
 		if (audioLibrary == null)
